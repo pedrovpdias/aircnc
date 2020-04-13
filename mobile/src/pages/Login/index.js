@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { KeyboardAvoidingView,
          Platform,
          AsyncStorage,
@@ -7,7 +7,7 @@ import { KeyboardAvoidingView,
          Text, 
          TextInput, 
          TouchableOpacity
-        } from 'react-native';
+       } from 'react-native';
 
 import api from '../../services/api';        
 
@@ -18,12 +18,21 @@ function Login( { navigation } ){
     const [ email, setEmail ] = useState('');
     const [ techs, setTechs ] = useState('');
 
+    useEffect(()=>{
+        AsyncStorage.getItem('user_id').then(user => {
+            if(user) {
+                navigation.navigate('Spots');
+            }
+        })
+    }, []);
+
     async function handleSubmit(){
         const response = await api.post('/sessions', {
             email
         });
 
         const { _id } = response.data;
+
 
         await AsyncStorage.setItem('user_id', _id);
         await AsyncStorage.setItem('techs', techs);
